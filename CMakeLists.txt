@@ -234,6 +234,9 @@ find_package(ZLIB 1.3 MODULE)
 find_package(Zydis 5.0.0 CONFIG)
 find_package(pugixml 1.14 CONFIG)
 find_package(libusb 1.0.27 MODULE)
+if (NOT CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR NOT MSVC)
+    find_package(cryptopp 8.9.0 MODULE)
+endif()
 if (APPLE)
     find_package(date 3.0.1 CONFIG)
 endif()
@@ -699,6 +702,9 @@ set(CORE src/core/aerolib/stubs.cpp
          src/core/aerolib/aerolib.h
          src/core/address_space.cpp
          src/core/address_space.h
+         src/core/crypto/crypto.cpp
+         src/core/crypto/crypto.h
+         src/core/crypto/keys.h
          src/core/devices/base_device.cpp
          src/core/devices/base_device.h
          src/core/devices/ioccom.h
@@ -716,6 +722,10 @@ set(CORE src/core/aerolib/stubs.cpp
          src/core/devices/srandom_device.cpp
          src/core/devices/srandom_device.h
          src/core/file_format/pfs.h
+         src/core/file_format/pkg.cpp
+         src/core/file_format/pkg.h
+         src/core/file_format/pkg_type.cpp
+         src/core/file_format/pkg_type.h
          src/core/file_format/psf.cpp
          src/core/file_format/psf.h
          src/core/file_format/playgo_chunk.cpp
@@ -724,6 +734,8 @@ set(CORE src/core/aerolib/stubs.cpp
          src/core/file_format/trp.h
          src/core/file_sys/fs.cpp
          src/core/file_sys/fs.h
+         src/core/loader.cpp
+         src/core/loader.h
          src/core/loader/dwarf.cpp
          src/core/loader/dwarf.h
          src/core/loader/elf.cpp
@@ -1013,6 +1025,10 @@ set(QT_GUI src/qt_gui/about_dialog.cpp
            src/qt_gui/game_grid_frame.h
            src/qt_gui/game_install_dialog.cpp
            src/qt_gui/game_install_dialog.h
+           src/qt_gui/install_dir_select.cpp
+           src/qt_gui/install_dir_select.h
+           src/qt_gui/pkg_viewer.cpp
+           src/qt_gui/pkg_viewer.h
            src/qt_gui/trophy_viewer.cpp
            src/qt_gui/trophy_viewer.h
            src/qt_gui/elf_viewer.cpp
@@ -1068,7 +1084,7 @@ endif()
 create_target_directory_groups(shadps4)
 
 target_link_libraries(shadps4 PRIVATE magic_enum::magic_enum fmt::fmt toml11::toml11 tsl::robin_map xbyak::xbyak Tracy::TracyClient RenderDoc::API FFmpeg::ffmpeg Dear_ImGui gcn half::half ZLIB::ZLIB PNG::PNG)
-target_link_libraries(shadps4 PRIVATE Boost::headers GPUOpen::VulkanMemoryAllocator LibAtrac9 sirit Vulkan::Headers xxHash::xxhash Zydis::Zydis glslang::glslang SDL3::SDL3 pugixml::pugixml stb::headers libusb::usb)
+target_link_libraries(shadps4 PRIVATE Boost::headers GPUOpen::VulkanMemoryAllocator LibAtrac9 sirit Vulkan::Headers xxHash::xxhash Zydis::Zydis glslang::glslang SDL3::SDL3 pugixml::pugixml stb::headers cryptopp::cryptopp libusb::usb)
 
 target_compile_definitions(shadps4 PRIVATE IMGUI_USER_CONFIG="imgui/imgui_config.h")
 target_compile_definitions(Dear_ImGui PRIVATE IMGUI_USER_CONFIG="${PROJECT_SOURCE_DIR}/src/imgui/imgui_config.h")
